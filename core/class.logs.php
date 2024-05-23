@@ -314,13 +314,13 @@ class VOYNOTIF_logs {
         
         unset($args['paged']);
         $args['per_page'] = -1;  
-        $logs = VOYNOTIF_logs::get_logs( $args );
+        $logs = VOYNOTIF_logs::get_logs( $args, true );
         
         if( empty( $logs ) ) {
             return 0;
         }
         
-        return count($logs);
+        return $logs[0]->count;
     }
     
     /**
@@ -329,7 +329,7 @@ class VOYNOTIF_logs {
      * @param type $args
      * @return type
      */
-    public static function get_logs( $args = array() ) {
+    public static function get_logs( $args = array(), $count = false ) {
         
         $defaults = array(
             'orderby'       => 'date',
@@ -343,7 +343,7 @@ class VOYNOTIF_logs {
         $args = wp_parse_args($args, $defaults);
 
         $per_page = $args['per_page'];
-        if( $per_page === -1 ) $per_page = 1000000000;
+        if( $per_page === -1 ) $per_page = null;
         $offset = 0;
         if( $args['paged'] > 1 ) {
             $offset = ($args['paged'] - 1) * $per_page; 
@@ -356,13 +356,15 @@ class VOYNOTIF_logs {
         
         global $wpdb;
         $table = self::get_table_name();
+	$pagination = $per_page ? "LIMIT $per_page OFFSET $offset" : '';
+        $select = $count ? 'COUNT(id) as count' : 'id, notification_id, type, recipient, subject, title, status, context, date, token, opens';
         $fivesdrafts = $wpdb->get_results( 
             "
-            SELECT id, notification_id, type, recipient, subject, title, status, context, date, token, opens  
+            SELECT $select  
             FROM $table
                 $where
                 ORDER BY ".$args['orderby']." ".$args['order']."
-                LIMIT $per_page OFFSET $offset
+                $pagination
             "
         );
         return $fivesdrafts; 
