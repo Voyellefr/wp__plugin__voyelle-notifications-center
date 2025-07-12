@@ -27,6 +27,13 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
         add_filter( 'voynotif/logs/context/type=wc_new_order', array( $this, 'log_context' ), 10, 2 );
         
         include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/new-order.php');
+        include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/customer-processing-order.php');
+        include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/customer-completed-order.php');
+        include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/customer-refunded-order.php');
+        include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/customer-on-hold-order.php');
+        include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/customer-new-account.php');
+        include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/customer-note.php');
+        include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/customer-reset-password.php');
     }
     
     public function add_settings( $fields ) {
@@ -91,6 +98,41 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
                 'tag' => 'woocommerce',
                 'description' => __( 'Email sent when an order is failed', 'notifications-center' ),
             ),
+            'wc_customer_processing_order' => array(
+                'label' => __( 'Customer processing order', 'notifications-center' ),
+                'tag' => 'woocommerce',
+                'description' => __( 'Email sent to customer when order is processing', 'notifications-center' ),
+            ),
+            'wc_customer_completed_order' => array(
+                'label' => __( 'Customer completed order', 'notifications-center' ),
+                'tag' => 'woocommerce',
+                'description' => __( 'Email sent to customer when order is completed', 'notifications-center' ),
+            ),
+            'wc_customer_refunded_order' => array(
+                'label' => __( 'Customer refunded order', 'notifications-center' ),
+                'tag' => 'woocommerce',
+                'description' => __( 'Email sent to customer when order is refunded', 'notifications-center' ),
+            ),
+            'wc_customer_on_hold_order' => array(
+                'label' => __( 'Customer on-hold order', 'notifications-center' ),
+                'tag' => 'woocommerce',
+                'description' => __( 'Email sent to customer when order is on-hold', 'notifications-center' ),
+            ),
+            'wc_customer_new_account' => array(
+                'label' => __( 'Customer new account', 'notifications-center' ),
+                'tag' => 'woocommerce',
+                'description' => __( 'Email sent to customer on new account creation', 'notifications-center' ),
+            ),
+            'wc_customer_note' => array(
+                'label' => __( 'Customer note', 'notifications-center' ),
+                'tag' => 'woocommerce',
+                'description' => __( 'Email sent to customer when a new note is added', 'notifications-center' ),
+            ),
+            'wc_customer_reset_password' => array(
+                'label' => __( 'Customer reset password', 'notifications-center' ),
+                'tag' => 'woocommerce',
+                'description' => __( 'Email sent to customer to reset password', 'notifications-center' ),
+            ),
         );
     }
     
@@ -134,7 +176,26 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
         $content = str_replace( '{wc_order_date}', $order->get_date_created()->format( get_option('date_format') ), $content );
         
         $content = str_replace( '{wc_billing_firstname}', $order->get_billing_first_name(), $content );
+        $content = str_replace( '{wc_billing_lastname}', $order->get_billing_last_name(), $content );
+        $content = str_replace( '{wc_billing_email}', $order->get_billing_email(), $content );
+        $content = str_replace( '{wc_billing_phone}', $order->get_billing_phone(), $content );
+        $content = str_replace( '{wc_billing_company}', $order->get_billing_company(), $content );
+        $content = str_replace( '{wc_billing_address_1}', $order->get_billing_address_1(), $content );
+        $content = str_replace( '{wc_billing_address_2}', $order->get_billing_address_2(), $content );
+        $content = str_replace( '{wc_billing_state}', $order->get_billing_state(), $content );
+        $content = str_replace( '{wc_billing_postcode}', $order->get_billing_postcode(), $content );
+        $content = str_replace( '{wc_billing_country}', $order->get_billing_country(), $content );
         $content = str_replace( '{wc_billing_address}', $order->get_formatted_billing_address(), $content );
+
+        $content = str_replace( '{wc_shipping_firstname}', $order->get_shipping_first_name(), $content );
+        $content = str_replace( '{wc_shipping_lastname}', $order->get_shipping_last_name(), $content );
+        $content = str_replace( '{wc_shipping_company}', $order->get_shipping_company(), $content );
+        $content = str_replace( '{wc_shipping_address_1}', $order->get_shipping_address_1(), $content );
+        $content = str_replace( '{wc_shipping_address_2}', $order->get_shipping_address_2(), $content );
+        $content = str_replace( '{wc_shipping_state}', $order->get_shipping_state(), $content );
+        $content = str_replace( '{wc_shipping_postcode}', $order->get_shipping_postcode(), $content );
+        $content = str_replace( '{wc_shipping_country}', $order->get_shipping_country(), $content );
+        $content = str_replace( '{wc_shipping_address}', $order->get_formatted_shipping_address(), $content );
         
         $content = str_replace( '{wc_shipping_method}', $order->get_shipping_method(), $content );
         $content = str_replace( '{wc_shipping_method2}', $order->get_shipping_to_display(), $content );  
@@ -157,17 +218,13 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
     public static function get_masks() {
         return array(
             
-            //Billing
+            //Order
             'wc_order_num' => array(
                 'title' => __('Order number', 'notifications-center'),
                 'tag' => 'woocommerce_order'
             ),
             'wc_order_date' => array(
                 'title' => __('Order date', 'notifications-center'),
-                'tag' => 'woocommerce_order'
-            ),
-            'wc_order_num' => array(
-                'title' => __('Order number', 'notifications-center'),
                 'tag' => 'woocommerce_order'
             ),
             'wc_order_details' => array(
@@ -185,7 +242,7 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
                 'tag' => 'woocommerce_order_customer'
             ),
             'wc_billing_email' => array(
-                'title' => __('Billing - Phone', 'notifications-center'),
+                'title' => __('Billing - Email', 'notifications-center'),
                 'tag' => 'woocommerce_order_customer'
             ),
             'wc_billing_phone' => array(
@@ -196,11 +253,11 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
                 'title' => __('Billing - Company', 'notifications-center'),
                 'tag' => 'woocommerce_order_customer'
             ),
-            'wc_billing_address1' => array(
+            'wc_billing_address_1' => array(
                 'title' => __('Billing - Address 1', 'notifications-center'),
                 'tag' => 'woocommerce_order_customer'
             ),
-            'wc_billing_address2' => array(
+            'wc_billing_address_2' => array(
                 'title' => __('Billing - Address 2', 'notifications-center'),
                 'tag' => 'woocommerce_order_customer'
             ),
@@ -230,23 +287,15 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
                 'title' => __('Shipping - Lastname', 'notifications-center'),
                 'tag' => 'woocommerce_order_customer'
             ),
-            'wc_shipping_email' => array(
-                'title' => __('Shipping - Phone', 'notifications-center'),
-                'tag' => 'woocommerce_order_customer'
-            ),
-            'wc_shipping_phone' => array(
-                'title' => __('Shipping - Phone', 'notifications-center'),
-                'tag' => 'woocommerce_order_customer'
-            ),
             'wc_shipping_company' => array(
                 'title' => __('Shipping - Company', 'notifications-center'),
                 'tag' => 'woocommerce_order_customer'
             ),
-            'wc_shipping_address1' => array(
+            'wc_shipping_address_1' => array(
                 'title' => __('Shipping - Address 1', 'notifications-center'),
                 'tag' => 'woocommerce_order_customer'
             ),
-            'wc_shipping_address2' => array(
+            'wc_shipping_address_2' => array(
                 'title' => __('Shipping - Address 2', 'notifications-center'),
                 'tag' => 'woocommerce_order_customer'
             ),
@@ -294,6 +343,20 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
                 'title' => __('Payment date', 'notifications-center'),
                 'tag' => 'woocommerce_order_payment'
             ),
+
+            //Customer
+            'user_login' => array(
+                'title' => __('Login', 'notifications-center'),
+                'tag' => 'user'
+            ),
+            'user_pass' => array(
+                'title' => __('Password', 'notifications-center'),
+                'tag' => 'user'
+            ),
+            'customer_note' => array(
+                'title' => __('Customer note', 'notifications-center'),
+                'tag' => 'woocommerce_order'
+            )
         );
     }
     

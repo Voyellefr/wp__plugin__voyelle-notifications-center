@@ -80,16 +80,8 @@ class VOYNOTIF_notification_type_wc_new_order extends VOYNOTIF_notification_type
      * @return arrray array of choices
      */
     function set_recipient_types($types) {
-        
-        //Unset default recipient types
-        //unset($types['emails']);
-        //unset($types['roles']);
-        //unset($types['users']);
-        
-        //Add custom recipient types
-        $types['post_author'] = __( 'Customer', 'notifications-center' );
-        
-        //return types
+        unset($types['post_author']);
+        $types['customer'] = __( 'Customer', 'notifications-center' );
         return $types;
     }
 
@@ -150,8 +142,7 @@ class VOYNOTIF_notification_type_wc_new_order extends VOYNOTIF_notification_type
                 'order_id' => $order_id,
             ) );
 
-            //Add author email to recipients
-            if( $notification->get_field('recipient_type') == 'post_author' ) { 
+            if( $notification->get_field('recipient_type') == 'customer' ) {
                 $notification->add_recipient($order->get_billing_email());
             }
 
