@@ -18,8 +18,8 @@
         "sort-packages": true
     },
     "autoload": {
-        "classmap": [
-            "includes/"
-        ]
+        "psr-4": {
+            "Voyelle\\NotificationsCenter\\": "includes/"
+        }
     }
 }

@@ -6,53 +6,68 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit1a6ff06eae86095af39941878d555672
 {
+    public static $prefixLengthsPsr4 = array (
+        'V' =>
+        array (
+            'Voyelle\\NotificationsCenter\\' => 28,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Voyelle\\NotificationsCenter\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/includes',
+        ),
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'VOYNOTIF_Customize_Textarea_Control' => __DIR__ . '/../..' . '/includes/admin/template-customizer.php',
-        'VOYNOTIF_addon' => __DIR__ . '/../..' . '/includes/framework/class-addon.php',
-        'VOYNOTIF_admin_default_notifications' => __DIR__ . '/../..' . '/includes/admin/default-notifications.php',
-        'VOYNOTIF_admin_help' => __DIR__ . '/../..' . '/includes/admin/help.php',
-        'VOYNOTIF_admin_notification' => __DIR__ . '/../..' . '/includes/admin/notification.php',
-        'VOYNOTIF_admin_notifications' => __DIR__ . '/../..' . '/includes/admin/notifications.php',
-        'VOYNOTIF_admin_settings' => __DIR__ . '/../..' . '/includes/admin/settings.php',
-        'VOYNOTIF_admin_templates' => __DIR__ . '/../..' . '/includes/admin/templates.php',
-        'VOYNOTIF_compat' => __DIR__ . '/../..' . '/includes/framework/class-compat.php',
-        'VOYNOTIF_compat_duplicate_post' => __DIR__ . '/../..' . '/includes/compat/class-compat-duplicate-post.php',
-        'VOYNOTIF_compat_gravityforms' => __DIR__ . '/../..' . '/includes/compat/class-compat-gravityforms.php',
-        'VOYNOTIF_compat_woocommerce' => __DIR__ . '/../..' . '/includes/compat/class-compat-woocommerce.php',
-        'VOYNOTIF_email_template' => __DIR__ . '/../..' . '/includes/core/class-email-template.php',
-        'VOYNOTIF_field' => __DIR__ . '/../..' . '/includes/core/class-field.php',
-        'VOYNOTIF_helpers' => __DIR__ . '/../..' . '/includes/core/class-helpers.php',
-        'VOYNOTIF_logs' => __DIR__ . '/../..' . '/includes/core/class-logs.php',
-        'VOYNOTIF_masks' => __DIR__ . '/../..' . '/includes/core/class-masks.php',
-        'VOYNOTIF_notification' => __DIR__ . '/../..' . '/includes/core/class-notification.php',
-        'VOYNOTIF_notification_type' => __DIR__ . '/../..' . '/includes/framework/class-notification-type.php',
-        'VOYNOTIF_notification_type_TYPENAME' => __DIR__ . '/../..' . '/includes/notifications/empty.php',
-        'VOYNOTIF_notification_type_comment_new' => __DIR__ . '/../..' . '/includes/notifications/comment_new.php',
-        'VOYNOTIF_notification_type_comment_pending' => __DIR__ . '/../..' . '/includes/notifications/comment_moderate.php',
-        'VOYNOTIF_notification_type_comment_reply' => __DIR__ . '/../..' . '/includes/notifications/comment_reply.php',
-        'VOYNOTIF_notification_type_content_draft' => __DIR__ . '/../..' . '/includes/notifications/content_draft.php',
-        'VOYNOTIF_notification_type_content_future' => __DIR__ . '/../..' . '/includes/notifications/content_future.php',
-        'VOYNOTIF_notification_type_content_pending' => __DIR__ . '/../..' . '/includes/notifications/content_pending.php',
-        'VOYNOTIF_notification_type_content_publish' => __DIR__ . '/../..' . '/includes/notifications/content_publish.php',
-        'VOYNOTIF_notification_type_content_trash' => __DIR__ . '/../..' . '/includes/notifications/content_trash.php',
-        'VOYNOTIF_notification_type_core_update' => __DIR__ . '/../..' . '/includes/notifications/core_update.php',
-        'VOYNOTIF_notification_type_duplicate_post' => __DIR__ . '/../..' . '/includes/notifications/content_duplicate.php',
-        'VOYNOTIF_notification_type_user_login' => __DIR__ . '/../..' . '/includes/notifications/user_login.php',
-        'VOYNOTIF_notification_type_user_password_changed' => __DIR__ . '/../..' . '/includes/notifications/user_password_changed.php',
-        'VOYNOTIF_notification_type_user_password_reset' => __DIR__ . '/../..' . '/includes/notifications/user_password_reset.php',
-        'VOYNOTIF_notification_type_user_register' => __DIR__ . '/../..' . '/includes/notifications/user_register.php',
-        'VOYNOTIF_notification_type_wc_new_order' => __DIR__ . '/../..' . '/includes/notifications/woocommerce/new-order.php',
-        'VOYNOTIF_settings_import' => __DIR__ . '/../..' . '/includes/admin/settings-import.php',
-        'VOYNOTIF_settings_logs' => __DIR__ . '/../..' . '/includes/admin/settings-logs.php',
-        'VOYNOTIF_settings_screen' => __DIR__ . '/../..' . '/includes/framework/class-settings-screen.php',
-        'VOYNOTIF_template_customizer' => __DIR__ . '/../..' . '/includes/admin/template-customizer.php',
-        'VOYNOTIF_updater' => __DIR__ . '/../..' . '/includes/class-updater.php',
+        'Voyelle\\NotificationsCenter\\Admin\\DefaultNotifications' => __DIR__ . '/../..' . '/includes/Admin/DefaultNotifications.php',
+        'Voyelle\\NotificationsCenter\\Admin\\Help' => __DIR__ . '/../..' . '/includes/Admin/Help.php',
+        'Voyelle\\NotificationsCenter\\Admin\\Notification' => __DIR__ . '/../..' . '/includes/Admin/Notification.php',
+        'Voyelle\\NotificationsCenter\\Admin\\Notifications' => __DIR__ . '/../..' . '/includes/Admin/Notifications.php',
+        'Voyelle\\NotificationsCenter\\Admin\\Settings' => __DIR__ . '/../..' . '/includes/Admin/Settings.php',
+        'Voyelle\\NotificationsCenter\\Admin\\SettingsImport' => __DIR__ . '/../..' . '/includes/Admin/SettingsImport.php',
+        'Voyelle\\NotificationsCenter\\Admin\\SettingsLogs' => __DIR__ . '/../..' . '/includes/Admin/SettingsLogs.php',
+        'Voyelle\\NotificationsCenter\\Admin\\TemplateCustomizer' => __DIR__ . '/../..' . '/includes/Admin/TemplateCustomizer.php',
+        'Voyelle\\NotificationsCenter\\Admin\\Templates' => __DIR__ . '/../..' . '/includes/Admin/Templates.php',
+        'Voyelle\\NotificationsCenter\\Compat\\DuplicatePost' => __DIR__ . '/../..' . '/includes/Compat/DuplicatePost.php',
+        'Voyelle\\NotificationsCenter\\Compat\\GravityForms' => __DIR__ . '/../..' . '/includes/Compat/GravityForms.php',
+        'Voyelle\\NotificationsCenter\\Compat\\WooCommerce' => __DIR__ . '/../..' . '/includes/Compat/WooCommerce.php',
+        'Voyelle\\NotificationsCenter\\Core\\EmailTemplate' => __DIR__ . '/../..' . '/includes/Core/EmailTemplate.php',
+        'Voyelle\\NotificationsCenter\\Core\\Field' => __DIR__ . '/../..' . '/includes/Core/Field.php',
+        'Voyelle\\NotificationsCenter\\Core\\Helpers' => __DIR__ . '/../..' . '/includes/Core/Helpers.php',
+        'Voyelle\\NotificationsCenter\\Core\\Logs' => __DIR__ . '/../..' . '/includes/Core/Logs.php',
+        'Voyelle\\NotificationsCenter\\Core\\Masks' => __DIR__ . '/../..' . '/includes/Core/Masks.php',
+        'Voyelle\\NotificationsCenter\\Core\\Notification' => __DIR__ . '/../..' . '/includes/Core/Notification.php',
+        'Voyelle\\NotificationsCenter\\Framework\\Addon' => __DIR__ . '/../..' . '/includes/Framework/Addon.php',
+        'Voyelle\\NotificationsCenter\\Framework\\Compat' => __DIR__ . '/../..' . '/includes/Framework/Compat.php',
+        'Voyelle\\NotificationsCenter\\Framework\\NotificationType' => __DIR__ . '/../..' . '/includes/Framework/NotificationType.php',
+        'Voyelle\\NotificationsCenter\\Framework\\SettingsScreen' => __DIR__ . '/../..' . '/includes/Framework/SettingsScreen.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\CommentModerate' => __DIR__ . '/../..' . '/includes/Notifications/CommentModerate.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\CommentNew' => __DIR__ . '/../..' . '/includes/Notifications/CommentNew.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\CommentReply' => __DIR__ . '/../..' . '/includes/Notifications/CommentReply.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\ContentDraft' => __DIR__ . '/../..' . '/includes/Notifications/ContentDraft.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\ContentFuture' => __DIR__ . '/../..' . '/includes/Notifications/ContentFuture.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\ContentPending' => __DIR__ . '/../..' . '/includes/Notifications/ContentPending.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\ContentPublish' => __DIR__ . '/../..' . '/includes/Notifications/ContentPublish.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\ContentTrash' => __DIR__ . '/../..' . '/includes/Notifications/ContentTrash.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\CoreUpdate' => __DIR__ . '/../..' . '/includes/Notifications/CoreUpdate.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\DuplicatePost' => __DIR__ . '/../..' . '/includes/Notifications/DuplicatePost.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\ExampleType' => __DIR__ . '/../..' . '/includes/Notifications/ExampleType.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\UserLogin' => __DIR__ . '/../..' . '/includes/Notifications/UserLogin.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\UserPasswordChanged' => __DIR__ . '/../..' . '/includes/Notifications/UserPasswordChanged.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\UserPasswordReset' => __DIR__ . '/../..' . '/includes/Notifications/UserPasswordReset.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\UserRegister' => __DIR__ . '/../..' . '/includes/Notifications/UserRegister.php',
+        'Voyelle\\NotificationsCenter\\Notifications\\WooCommerce\\NewOrder' => __DIR__ . '/../..' . '/includes/Notifications/WooCommerce/NewOrder.php',
+        'Voyelle\\NotificationsCenter\\Updater' => __DIR__ . '/../..' . '/includes/Updater.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1a6ff06eae86095af39941878d555672::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1a6ff06eae86095af39941878d555672::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit1a6ff06eae86095af39941878d555672::$classMap;
 
         }, null, ClassLoader::class);

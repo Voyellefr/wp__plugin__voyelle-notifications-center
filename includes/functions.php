@@ -1,4 +1,7 @@
 <?php
+
+use Voyelle\NotificationsCenter\Core\Notification;
+
 /*
  * -------------------------------------------------------------------------
  * COMMON API
@@ -186,7 +189,7 @@ if( !function_exists('voynotif_get_notifications') ) {
 
         //Build notifications objects
         foreach( $notifications as $notification ) {
-            $matching_notifications[] = new VOYNOTIF_notification($notification->ID);
+            $matching_notifications[] = new Notification($notification->ID);
         }
 
         //Return only one or all matching notifications, regarding to $only_one param
@@ -314,7 +317,7 @@ if( !function_exists('voynotif_get_settings_fields') ) {
 if( !function_exists('voynotif_get_notification') ) {
     function voynotif_get_notification( $notification_id ) {
         if( get_post( $notification_id ) ) {
-            return new VOYNOTIF_notification( $notification_id );
+            return new Notification( $notification_id );
         }
         return null;
     }

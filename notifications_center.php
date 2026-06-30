@@ -12,20 +12,25 @@ Requires at least: 7.0
 Requires PHP: 8.2
 */
 
+namespace Voyelle\NotificationsCenter;
+
+use Voyelle\NotificationsCenter\Core\Notification;
+
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-if ( ! class_exists( 'VOYNOTIF_plugin' ) ) {
-    class VOYNOTIF_plugin {
+if ( ! class_exists( Plugin::class ) ) {
+    class Plugin {
 
         /**
          * Updater instance.
          *
-         * @var VOYNOTIF_updater
+         * @var Updater
          */
-        public VOYNOTIF_updater $updater;
+        public Updater $updater;
 
         /**
          * Admin notices to render.
@@ -85,23 +90,23 @@ if ( ! class_exists( 'VOYNOTIF_plugin' ) ) {
             // 5. Includes with side effects (self-registering files)
             //    Pure classes are loaded on demand by the Composer autoloader.
             //------------------------------------------------------------//
-            require_once VOYNOTIF_DIR . '/includes/core/class-logs.php';
-            require_once VOYNOTIF_DIR . '/includes/core/class-helpers.php';
+            require_once VOYNOTIF_DIR . '/includes/Core/Logs.php';
+            require_once VOYNOTIF_DIR . '/includes/Core/Helpers.php';
             require_once VOYNOTIF_DIR . '/includes/functions.php';
             require_once VOYNOTIF_DIR . '/includes/template.php';
 
-            require_once VOYNOTIF_DIR . '/includes/admin/notifications.php';
-            require_once VOYNOTIF_DIR . '/includes/admin/notification.php';
-            require_once VOYNOTIF_DIR . '/includes/admin/template-customizer.php';
-            require_once VOYNOTIF_DIR . '/includes/admin/settings.php';
-            require_once VOYNOTIF_DIR . '/includes/admin/settings-import.php';
-            require_once VOYNOTIF_DIR . '/includes/admin/settings-logs.php';
-            //require_once VOYNOTIF_DIR . '/includes/admin/help.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/Notifications.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/Notification.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/TemplateCustomizer.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/Settings.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/SettingsImport.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/SettingsLogs.php';
+            //require_once VOYNOTIF_DIR . '/includes/Admin/Help.php';
 
             //------------------------------------------------------------//
             // 6. CLASS Init
             //------------------------------------------------------------//
-            $this->updater = new VOYNOTIF_updater();
+            $this->updater = new Updater();
 
         }
 
@@ -220,24 +225,24 @@ if ( ! class_exists( 'VOYNOTIF_plugin' ) ) {
         public function init() {
 
             //Add compat files with other plugins
-            require_once VOYNOTIF_DIR . '/includes/compat/class-compat-duplicate-post.php';
-            require_once VOYNOTIF_DIR . '/includes/compat/class-compat-gravityforms.php';
-            require_once VOYNOTIF_DIR . '/includes/compat/class-compat-woocommerce.php';
+            require_once VOYNOTIF_DIR . '/includes/Compat/DuplicatePost.php';
+            require_once VOYNOTIF_DIR . '/includes/Compat/GravityForms.php';
+            require_once VOYNOTIF_DIR . '/includes/Compat/WooCommerce.php';
 
             //Load Notifications
-            require_once VOYNOTIF_DIR . '/includes/notifications/comment_new.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/comment_reply.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/comment_moderate.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/content_draft.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/content_future.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/content_pending.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/content_publish.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/content_trash.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/core_update.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/user_login.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/user_password_changed.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/user_password_reset.php';
-            require_once VOYNOTIF_DIR . '/includes/notifications/user_register.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/CommentNew.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/CommentReply.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/CommentModerate.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentDraft.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentFuture.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentPending.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentPublish.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentTrash.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/CoreUpdate.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/UserLogin.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/UserPasswordChanged.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/UserPasswordReset.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/UserRegister.php';
 
             //Check for udpate
             if ( $this->updater->current_version !== $this->updater->new_version ) {
@@ -267,7 +272,7 @@ if ( ! class_exists( 'VOYNOTIF_plugin' ) ) {
         public function template_preview() {
             if ( is_singular( 'voy_notification' ) ) {
                 if ( is_user_logged_in() ) {
-                    $notification = new VOYNOTIF_notification( get_the_ID() );
+                    $notification = new Notification( get_the_ID() );
                     echo $notification->get_html();
                 } else {
                     _e( 'You must be logged in to preview this notification', 'notifications-center' );
@@ -355,7 +360,7 @@ if ( ! class_exists( 'VOYNOTIF_plugin' ) ) {
 
     }
 }
-$notifications_center = new VOYNOTIF_plugin();
+$notifications_center = new Plugin();
 
 register_activation_hook( __FILE__, [ $notifications_center, 'cron_activation' ] );
 register_deactivation_hook( __FILE__, [ $notifications_center, 'cron_deactivation' ] );
