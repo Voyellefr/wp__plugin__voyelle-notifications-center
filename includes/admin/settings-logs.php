@@ -55,7 +55,7 @@ class VOYNOTIF_settings_logs extends VOYNOTIF_settings_screen {
     }
     
     function html() {        
-        include_once('views/settings-logs.php');
+        include_once( __DIR__ . '/views/settings-logs.php' );
     }
 
   

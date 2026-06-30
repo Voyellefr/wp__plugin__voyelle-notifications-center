@@ -703,7 +703,7 @@ if( !class_exists( 'VOYNOTIF_admin_settings' ) ) {
          * 
          */
         function settings_about_screen() {
-            include_once('views/tab-about.php');
+            include_once( __DIR__ . '/views/tab-about.php' );
         }
         
         

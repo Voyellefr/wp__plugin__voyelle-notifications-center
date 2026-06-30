@@ -20,9 +20,9 @@ function voy_notif_delete_notifications() {
         
 //Multisite install
 if( is_multisite() ) {
-    $sites = wp_get_sites();
-    foreach ( $sites as $i => $site ) {
-        switch_to_blog( $site[ 'blog_id' ] );
+    $sites = get_sites();
+    foreach ( $sites as $site ) {
+        switch_to_blog( (int) $site->blog_id );
         delete_option( 'voynotif_current_template' );
         delete_option( 'voynotif_email_logo' );
         delete_option( 'voynotif_email_title_color' );

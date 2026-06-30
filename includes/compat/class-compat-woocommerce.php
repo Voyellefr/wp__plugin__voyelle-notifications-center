@@ -26,7 +26,7 @@ class VOYNOTIF_compat_woocommerce extends VOYNOTIF_compat {
         
         add_filter( 'voynotif/logs/context/type=wc_new_order', array( $this, 'log_context' ), 10, 2 );
         
-        include_once( VOYNOTIF_DIR .  '/notifications/woocommerce/new-order.php');
+        include_once( VOYNOTIF_DIR . '/includes/notifications/woocommerce/new-order.php');
     }
     
     public function add_settings( $fields ) {
