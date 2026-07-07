@@ -1,0 +1,25 @@
+{
+    "name": "voyelle/notifications-center",
+    "description": "Personalized notifications for your WordPress website with beautiful, responsive and personalized emails.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "homepage": "http://www.notificationscenter.com/",
+    "authors": [
+        {
+            "name": "Florian Chaillou",
+            "homepage": "http://www.notificationscenter.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Voyelle\\NotificationsCenter\\": "includes/"
+        }
+    }
+}

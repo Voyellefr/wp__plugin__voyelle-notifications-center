@@ -8,116 +8,127 @@ Author: Florian Chaillou
 Author URI: http://www.notificationscenter.com 
 Text Domain: notifications-center
 Domain Path: /languages
+Requires at least: 7.0
+Requires PHP: 8.2
 */
 
-if( !class_exists( 'VOYNOTIF_plugin' ) ) {
-    class VOYNOTIF_plugin {
+namespace Voyelle\NotificationsCenter;
 
-        
+use Voyelle\NotificationsCenter\Core\Notification;
+
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+if ( ! class_exists( Plugin::class ) ) {
+    class Plugin {
+
         /**
-         * @var object(VOYNOTIF_updater) 
+         * Updater instance.
+         *
+         * @var Updater
          */
-        var $updater;
+        public Updater $updater;
+
+        /**
+         * Admin notices to render.
+         *
+         * @var array<int, array{class: string, message: string}>
+         */
+        public array $admin_notices = [];
 
         /**
          * Plugin init
-         * 
+         *
          * @author Floflo
          * @since 0.9
          * @update 2017-01-17
          */
-        function __construct() {
+        public function __construct() {
 
             //------------------------------------------------------------//
             // 1. Constants
             //------------------------------------------------------------// 
-            define('VOYNOTIF_DIR', WP_PLUGIN_DIR . '/' . basename( dirname( __FILE__ ) ) );
-            define('VOYNOTIF_URL', plugins_url() . '/' . basename( dirname( __FILE__ ) ) );
-            define('VOYNOTIF_VERSION', '1.5.2');
-            define('VOYNOTIF_FIELD_PREFIXE', 'voynotif_');
-            define('VOYNOTIF_PREMIUM_URL', 'http://www.notificationscenter.com');
-            define('VOYNOTIF_EXPORT_VERSION', '1.1.0');
+            define( 'VOYNOTIF_DIR', WP_PLUGIN_DIR . '/' . basename( dirname( __FILE__ ) ) );
+            define( 'VOYNOTIF_URL', plugins_url() . '/' . basename( dirname( __FILE__ ) ) );
+            define( 'VOYNOTIF_VERSION', '1.5.2' );
+            define( 'VOYNOTIF_FIELD_PREFIXE', 'voynotif_' );
+            define( 'VOYNOTIF_PREMIUM_URL', 'http://www.notificationscenter.com' );
+            define( 'VOYNOTIF_EXPORT_VERSION', '1.1.0' );
 
             //------------------------------------------------------------//
-            // 2. Plugin activation hook
-            //------------------------------------------------------------// 
-            register_activation_hook( __FILE__, array( $this, 'install' ) );
+            // 2. Autoloader
+            //------------------------------------------------------------//
+            require_once __DIR__ . '/vendor/autoload.php';
 
             //------------------------------------------------------------//
-            // 3. Hook setup
+            // 3. Plugin activation hook
             //------------------------------------------------------------// 
-            add_action( 'init', array( $this, 'post_type_register' ), 0 );
-            add_action( 'admin_enqueue_scripts', array( $this, 'admin_loadscripts' ) );
-            add_action( 'plugins_loaded', array( $this, 'load_text_domain' ) );
-            add_action( 'plugins_loaded', array( $this, 'init' ), 20 );
-            add_action( 'template_redirect', array( $this, 'template_preview' ) );
-            add_action( 'admin_notices', array( $this, 'admin_notices' ) );                
-            
+            register_activation_hook( __FILE__, [ $this, 'install' ] );
+
+            //------------------------------------------------------------//
+            // 4. Hook setup
+            //------------------------------------------------------------// 
+            add_action( 'init', [ $this, 'post_type_register' ], 0 );
+            add_action( 'admin_enqueue_scripts', [ $this, 'admin_loadscripts' ] );
+            add_action( 'plugins_loaded', [ $this, 'load_text_domain' ] );
+            add_action( 'plugins_loaded', [ $this, 'init' ], 20 );
+            add_action( 'template_redirect', [ $this, 'template_preview' ] );
+            add_action( 'admin_notices', [ $this, 'admin_notices' ] );
+
             /**
              * @since 1.1.0
              */
-            if( get_option( VOYNOTIF_FIELD_PREFIXE . 'extend_sender' ) == 'wordpress' ) {
-                add_action( 'wp_mail_from_name', array( $this, 'extend_sender_name'), 100, 1 );
-                add_action( 'wp_mail_from', array( $this, 'extend_sender_email' ), 100, 1 );    
+            if ( get_option( VOYNOTIF_FIELD_PREFIXE . 'extend_sender' ) === 'wordpress' ) {
+                add_action( 'wp_mail_from_name', [ $this, 'extend_sender_name' ], 100, 1 );
+                add_action( 'wp_mail_from', [ $this, 'extend_sender_email' ], 100, 1 );
             }
-            
-            //------------------------------------------------------------//
-            // 4. Includes
-            //------------------------------------------------------------//
-            include_once('updater.php');
-            
-            include_once('core/framework/class.notification_type.php');
-            include_once('core/framework/class.compat.php');
-            include_once('core/framework/class.addon.php');
-            include_once('core/framework/class.settings_screen.php');
-            
-            include_once('admin/notifications.php');
-            include_once('admin/notification.php');   
-            include_once('admin/template-customizer.php');
-            include_once('admin/settings.php');
-            include_once('admin/settings-import.php');
-            include_once('admin/settings-logs.php');
-            //include_once('admin/help.php');
 
-            include_once('core/class.notification.php');
-            include_once('core/class.email_template.php');           
-            include_once('core/class.field.php');
-            include_once('core/functions.php');
-            include_once('core/class.masks.php');
-            include_once('core/class.logs.php');
-            include_once('core/template.php');
-            include_once('core/class.helpers.php');
-           
-                     
-            
-            
             //------------------------------------------------------------//
-            // 5. CLASS Init
+            // 5. Includes with side effects (self-registering files)
+            //    Pure classes are loaded on demand by the Composer autoloader.
             //------------------------------------------------------------//
-            $this->updater = new VOYNOTIF_updater();
-            $this->admin_notices = array();
+            require_once VOYNOTIF_DIR . '/includes/Core/Logs.php';
+            require_once VOYNOTIF_DIR . '/includes/Core/Helpers.php';
+            require_once VOYNOTIF_DIR . '/includes/functions.php';
+            require_once VOYNOTIF_DIR . '/includes/template.php';
+
+            require_once VOYNOTIF_DIR . '/includes/Admin/Notifications.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/Notification.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/TemplateCustomizer.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/Settings.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/SettingsImport.php';
+            require_once VOYNOTIF_DIR . '/includes/Admin/SettingsLogs.php';
+            //require_once VOYNOTIF_DIR . '/includes/Admin/Help.php';
+
+            //------------------------------------------------------------//
+            // 6. CLASS Init
+            //------------------------------------------------------------//
+            $this->updater = new Updater();
 
         }
-        
+
         public function answer_expiration_event() {
-            error_log('answer_expiration_event');
+            error_log( 'answer_expiration_event' );
         }
-        
+
 
         /**
          * Install plugin with dummy data (current template, colors, etc)
-         * 
+         *
          * @author Floflo
          * @since 0.9
          * @update 2016-07-19
          */
-        function install() {
-            
+        public function install() {
+
             //Multisite install
-            if( is_multisite() ) {
-                $sites = wp_get_sites();
-                foreach ( $sites as $i => $site ) {
-                    switch_to_blog( $site[ 'blog_id' ] );
+            if ( is_multisite() ) {
+                $sites = get_sites();
+                foreach ( $sites as $site ) {
+                    switch_to_blog( (int) $site->blog_id );
                     $this->updater->init();
                     restore_current_blog();
                 }
@@ -132,14 +143,14 @@ if( !class_exists( 'VOYNOTIF_plugin' ) ) {
 
         /**
          * Post type register
-         * 
+         *
          * @author Floflo
          * @since 0.9
          * @update 2016-06-02
-         */    
-        function post_type_register() {
+         */
+        public function post_type_register() {
 
-            $labels = array(
+            $labels = [
                 'name'                => __( 'Notifications', 'Post Type General Name', 'notifications-center' ),
                 'singular_name'       => __( 'Notification', 'Post Type Singular Name', 'notifications-center' ),
                 'menu_name'           => __( 'Notifications', 'notifications-center' ),
@@ -152,13 +163,13 @@ if( !class_exists( 'VOYNOTIF_plugin' ) ) {
                 'search_items'        => __( 'Search', 'notifications-center' ),
                 'not_found'           => __( 'No notification found', 'notifications-center' ),
                 'not_found_in_trash'  => __( 'Not found in Trash', 'notifications-center' ),
-            );
-            $args = apply_filters( 'voy/notif/install/register_cpt', 
-                array(
+            ];
+            $args = apply_filters( 'voy/notif/install/register_cpt',
+                [
                     'label'               => __( 'voy_notification', 'notifications-center' ),
                     'description'         => __( 'voy_notification', 'notifications-center' ),
                     'labels'              => $labels,
-                    'supports'            => array( 'title', 'editor', 'author', 'revisions', ),
+                    'supports'            => [ 'title', 'editor', 'author', 'revisions' ],
                     'hierarchical'        => false,
                     'public'              => false,
                     'show_ui'             => true,
@@ -172,161 +183,162 @@ if( !class_exists( 'VOYNOTIF_plugin' ) ) {
                     'exclude_from_search' => false,
                     'publicly_queryable'  => false,
                     'capability_type'     => 'post',
-                ) 
+                ]
             );
-            register_post_type( 'voy_notification', $args );  
+            register_post_type( 'voy_notification', $args );
 
         }
 
 
         /**
          * Load admin scripts
-         * 
+         *
          * @author Floflo
          * @since 0.9
          * @update 2016-06-02
          */
-        function admin_loadscripts() {
+        public function admin_loadscripts() {
             wp_register_style( 'voynotif_admin_css', VOYNOTIF_URL . '/assets/css/admin.css', false, VOYNOTIF_VERSION );
-            wp_enqueue_style( 'voynotif_admin_css' );        
+            wp_enqueue_style( 'voynotif_admin_css' );
         }
 
 
         /**
          * Load text domain
-         * 
+         *
          * @author Floflo
          * @since 0.9
          * @update 2016-06-02
          */
-        function load_text_domain() {
-            load_plugin_textdomain( 'notifications-center', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+        public function load_text_domain() {
+            load_plugin_textdomain( 'notifications-center', false, basename( dirname( __FILE__ ) ) . '/languages/' );
         }
 
 
         /**
          * Init plugin with loading notifications & templates
-         * 
+         *
          * @author Floflo
          * @since 0.9
          * @update 2016-07-13
          */
-        function init() {
+        public function init() {
 
             //Add compat files with other plugins
-            include_once('core/compat/duplicate-post.php'); 
-            include_once('core/compat/gravityforms.php'); 
-            include_once('core/compat/woocommerce.php'); 
-            
+            require_once VOYNOTIF_DIR . '/includes/Compat/DuplicatePost.php';
+            require_once VOYNOTIF_DIR . '/includes/Compat/GravityForms.php';
+            require_once VOYNOTIF_DIR . '/includes/Compat/WooCommerce.php';
+
             //Load Notifications
-            include_once('notifications/comment_new.php');
-            include_once('notifications/comment_reply.php');
-            include_once('notifications/comment_moderate.php');
-            include_once('notifications/content_draft.php');
-            include_once('notifications/content_future.php');
-            include_once('notifications/content_pending.php');
-            include_once('notifications/content_publish.php');
-            include_once('notifications/content_trash.php');
-            include_once('notifications/core_update.php');            
-            include_once('notifications/user_login.php');
-            include_once('notifications/user_password_changed.php');
-            include_once('notifications/user_password_reset.php');
-            include_once('notifications/user_register.php');
-            
+            require_once VOYNOTIF_DIR . '/includes/Notifications/CommentNew.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/CommentReply.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/CommentModerate.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentDraft.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentFuture.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentPending.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentPublish.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/ContentTrash.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/CoreUpdate.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/UserLogin.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/UserPasswordChanged.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/UserPasswordReset.php';
+            require_once VOYNOTIF_DIR . '/includes/Notifications/UserRegister.php';
+
             //Check for udpate
-            if( $this->updater->current_version !== $this->updater->new_version ) {
+            if ( $this->updater->current_version !== $this->updater->new_version ) {
                 $this->updater->update();
             }
-            
+
             /**
              * ACTION voynotif/loaded
              * Triggered when Notifications Center is fully loaded (both function & notifications)
-             * 
+             *
              * @author Floflo
              * @since 1.3.0
              * @update 2017-08-26
              */
-            do_action('voynotif/loaded');
+            do_action( 'voynotif/loaded' );
 
         }
 
 
         /**
          * Generate template preview
-         * 
+         *
          * @author Floflo
          * @since 0.9
          * @update 2016-07-13
          */
-        function template_preview() {
-            if( is_singular( 'voy_notification' ) ) {
-                if( is_user_logged_in() ) {
-                    $notification = new VOYNOTIF_notification( get_the_ID() );
-                    echo $notification->get_html();              
+        public function template_preview() {
+            if ( is_singular( 'voy_notification' ) ) {
+                if ( is_user_logged_in() ) {
+                    $notification = new Notification( get_the_ID() );
+                    echo $notification->get_html();
                 } else {
                     _e( 'You must be logged in to preview this notification', 'notifications-center' );
                 }
                 exit();
             }
         }
-        
-        
+
+
         /**
          * Overrides Wordpress default sender name
-         * 
+         *
          * @author Floflo
          * @since 1.1.0
          * @update 2016-12-11
-         * 
+         *
          * @param string $name Wordpress default sender name
          * @return string Notifications Center sender name
          */
-        function extend_sender_name( $name ) {
-            
+        public function extend_sender_name( $name ) {
+
             $sender_name = get_option( VOYNOTIF_FIELD_PREFIXE . 'sender_name' );
-            
-            if( !empty( $sender_name ) ) {
+
+            if ( ! empty( $sender_name ) ) {
                 return $sender_name;
-            } 
-            
+            }
+
             return $name;
-            
+
         }
-        
-        
+
+
         /**
          * Overrides Wordpress default sender email
-         * 
+         *
          * @author Floflo
          * @since 1.1.0
          * @update 2016-12-11
-         * 
+         *
          * @param string $email Wordpress default sender email
          * @return string Notifications Center sender email
          */
-        function extend_sender_email( $email ) {
-            
+        public function extend_sender_email( $email ) {
+
             $sender_email = get_option( VOYNOTIF_FIELD_PREFIXE . 'sender_email' );
-            
-            if( is_email( $sender_email ) ) {
+
+            if ( is_email( $sender_email ) ) {
                 return $sender_email;
-            } 
-            
+            }
+
             return $email;
-            
+
         }
-        
+
         /**
-         * 
-         * @return type
+         * Render queued admin notices.
+         *
+         * @return void
          */
-        function admin_notices() {
-            
-            if( empty( $this->admin_notices ) ) {
+        public function admin_notices() {
+
+            if ( empty( $this->admin_notices ) ) {
                 return;
             }
-            
-            foreach ($this->admin_notices as $notice) {
+
+            foreach ( $this->admin_notices as $notice ) {
             ?>
             <div class="notice notice-<?php echo $notice['class']; ?> is-dismissible">
                 <p><?php echo $notice['message']; ?></p>
@@ -334,29 +346,21 @@ if( !class_exists( 'VOYNOTIF_plugin' ) ) {
             <?php
             }
         }
-        
+
         public function cron_activation() {
-            if( !wp_next_scheduled( 'notifications_center_logs_deletion' ) ) {
-                error_log('activation');
+            if ( ! wp_next_scheduled( 'notifications_center_logs_deletion' ) ) {
+                error_log( 'activation' );
                 wp_schedule_event( time(), 'daily', 'notifications_center_logs_deletion' );
-            }          
+            }
         }
-        
+
         public function cron_deactivation() {
-            wp_clear_scheduled_hook('notifications_center_logs_deletion');
+            wp_clear_scheduled_hook( 'notifications_center_logs_deletion' );
         }
-        
-        
-        
+
     }
 }
-$notifications_center = new VOYNOTIF_plugin();
+$notifications_center = new Plugin();
 
-register_activation_hook( __FILE__, array($notifications_center, 'cron_activation') );
-register_deactivation_hook(__FILE__, array($notifications_center, 'cron_deactivation') );
-
-
-
-
-
-
+register_activation_hook( __FILE__, [ $notifications_center, 'cron_activation' ] );
+register_deactivation_hook( __FILE__, [ $notifications_center, 'cron_deactivation' ] );
